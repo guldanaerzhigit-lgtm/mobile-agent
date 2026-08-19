@@ -5,13 +5,20 @@ service firebase.storage {
     function memberOfConversation(conversationId) {
       return signedIn() && firestore.get(/databases/(default)/documents/conversations/$(conversationId)).data.members.hasAny([request.auth.uid]);
     }
+
     match /chat-files/{conversationId}/{fileName} {
-      allow read, write: if memberOfConversation(conversationId)
+      allow read: if memberOfConversation(conversationId);
+      allow create, update: if memberOfConversation(conversationId)
         && request.resource.size < 50 * 1024 * 1024;
+      allow delete: if memberOfConversation(conversationId);
     }
+
     match /avatars/{uid}/{fileName} {
       allow read: if true;
-      allow write: if signedIn() && request.auth.uid == uid && request.resource.size < 5 * 1024 * 1024;
+      allow create, update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.size < 5 * 1024 * 1024;
+      allow delete: if signedIn() && request.auth.uid == uid;
     }
   }
 }
