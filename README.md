@@ -1,36 +1,26 @@
 # Agent Messenger
 
-Современный веб/PWA-мессенджер в духе классического Mail.ru Агента. Фирменные логотипы и защищённые материалы оригинального сервиса не используются.
+Рабочий веб/PWA-мессенджер в стиле классического Mail.ru Агента, без копирования фирменных защищённых материалов оригинального сервиса.
 
-## Уже реализовано
+## Стек
+- Firebase Authentication
+- Cloud Firestore realtime listeners
+- Firebase Storage
+- WebRTC-каркас звонков
+- PWA / Service Worker
 
-- Email/password регистрация и вход через Firebase Authentication
-- профили пользователей и статусы
-- поиск пользователей
-- личные чаты с real-time обновлением Firestore
-- единая детерминированная схема `conversationId`, чтобы отправитель и получатель видели одну переписку
-- отправка текста, фото и файлов через Firebase Storage
-- индикаторы отправки/прочтения в модели сообщения
-- emoji
-- адаптивный интерфейс для ПК и телефона
-- PWA и service worker
-- светлая/тёмная тема
-- базовый WebRTC-каркас аудио/видеозвонков
-- Firestore и Storage Security Rules
+## Firebase
+Проект: `agent-21dde`.
 
-## Firebase setup
+В `firebase-config.js` уже указана конфигурация Firebase Web App.
 
-1. Открой Firebase Console и выбери проект `chatss-daa4b`.
-2. В Project settings → Your apps создай Web App или открой существующий.
-3. Скопируй `storageBucket`, `messagingSenderId` и `appId` в `firebase-config.js`.
-4. В Authentication включи Email/Password.
-5. Создай Firestore Database.
-6. Опубликуй `firestore.rules` как Firestore Rules.
-7. Опубликуй `storage.rules` как Storage Rules.
-8. Для публикации можно использовать Firebase Hosting или GitHub Pages.
+В Firebase Console необходимо включить:
+1. Authentication → Sign-in method → Email/Password.
+2. Firestore Database.
+3. Storage.
+4. Опубликовать `firestore.rules` и `storage.rules`.
 
-## Firestore structure
-
+## Основная схема данных
 ```text
 users/{uid}
 conversations/{conversationId}
@@ -39,12 +29,9 @@ calls/{callId}
   signals/{signalId}
 ```
 
-`conversationId` строится из двух UID в отсортированном порядке. Это предотвращает ситуацию, когда один пользователь пишет в одну коллекцию, а второй слушает другую.
+Для личного чата `conversationId` строится из двух UID в отсортированном порядке. Поэтому оба пользователя всегда работают с одной и той же перепиской.
 
-## Важно для звонков
+## Важно
+Firestore Security Rules применяются к запросам целиком, поэтому запросы приложения должны соответствовать ограничениям правил. Это особенно важно для списков и realtime listeners. См. официальную документацию Firebase.
 
-Для реальных звонков между мобильными сетями нужен TURN-сервер. STUN используется в демонстрационной конфигурации; без TURN некоторые NAT/мобильные сети не смогут установить прямое соединение.
-
-## Запуск
-
-Для ES modules нужен HTTPS или localhost. Например, Firebase Hosting, GitHub Pages или любой статический сервер.
+Для production-звонков между мобильными сетями потребуется TURN-сервер; одного STUN недостаточно для всех типов NAT.
