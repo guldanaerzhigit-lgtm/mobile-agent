@@ -2,9 +2,11 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     function signedIn() { return request.auth != null; }
+    function memberOfConversation(conversationId) {
+      return signedIn() && firestore.get(/databases/(default)/documents/conversations/$(conversationId)).data.members.hasAny([request.auth.uid]);
+    }
     match /chat-files/{conversationId}/{fileName} {
-      allow read, write: if signedIn()
-        && conversationId.matches('.*')
+      allow read, write: if memberOfConversation(conversationId)
         && request.resource.size < 50 * 1024 * 1024;
     }
     match /avatars/{uid}/{fileName} {
