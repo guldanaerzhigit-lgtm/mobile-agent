@@ -1,0 +1,10 @@
+{
+  "name":"Agent Messenger",
+  "short_name":"Agent",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#f7f9fb",
+  "theme_color":"#2f80ed",
+  "description":"Modern messenger inspired by the classic Agent experience",
+  "icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%232f80ed'/%3E%3Cpath d='M25 65 50 22l25 43-25-9z' fill='white'/%3E%3C/svg%3E","sizes":"any","type":"image/svg+xml"}]
+}
